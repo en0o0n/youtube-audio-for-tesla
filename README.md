@@ -102,7 +102,7 @@ You can customize the application by modifying the following environment variabl
 
 ## License
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT NonCommercial License**. See the [LICENSE](LICENSE) file for details.
 
 ---
 
