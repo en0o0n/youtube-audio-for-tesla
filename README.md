@@ -126,4 +126,4 @@ If you encounter any issues, feel free to open an issue on the [GitHub Issues Pa
 ## Acknowledgments
 
 - Built with ❤️ using **Flask**, **Docker**, and **YouTube Data API**.
-- Inspired by the simplicity of Tesla-style design.
+
