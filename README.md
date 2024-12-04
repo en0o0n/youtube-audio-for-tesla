@@ -4,7 +4,13 @@
 **YouTube Audio for Tesla** is a Flask-based web application that allows users to search for YouTube videos and play their audio directly. It is designed to be lightweight and simple, leveraging Docker for easy deployment.
 
 ---
+## Support
 
+If you find this project helpful, consider supporting me on Ko-fi:
+
+[![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/en0o0n)
+
+---
 ## Features
 
 - **Search YouTube Videos**: Enter a search query to find YouTube videos.
