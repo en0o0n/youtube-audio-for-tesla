@@ -14,14 +14,6 @@
 
 ---
 
-## Demo
-
-Access the application in your browser after deployment:
-```
-http://<host-ip>:<port>
-```
-
----
 
 ## Prerequisites
 
