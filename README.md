@@ -19,8 +19,14 @@ If you find this project helpful, consider supporting me on Ko-fi:
 - **Customizable**: Configure the YouTube API key, port, and host IP.
 
 ---
+## Screenshots
 
+### Start Page
+![Tesla YouTube Audio App Screenshot](https://github.com/en0o0n/youtube-audio-for-tesla/blob/main/tesla1.PNG)
+### Audio Paused 
+![Tesla YouTube Audio App Screenshot](https://github.com/en0o0n/youtube-audio-for-tesla/blob/main/tesla2.PNG)
 
+---
 ## Prerequisites
 
 - **YouTube API Key**: Obtain a key from the [Google Cloud Console](https://console.cloud.google.com/).
