@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8283:8283" # Maps host's port 8283 to container's port 8283
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8283
+      - YOUTUBE_API_KEY=${YOUTUBE_API_KEY}
+      - FLASK_ENV=production
