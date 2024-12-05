@@ -64,18 +64,23 @@ Replace `your_youtube_api_key` with your actual YouTube API key.
 ### Run with Docker
 
 #### Using `docker run`
+1. Pull the Docker image
+   ```bash
+   docker pull en0o0n/youtube-audio-for-tesla:latest sudo 
+   ```
+2. Edit the .env file 
 
-1. Build the Docker image:
+3. Build the Docker image:
    ```bash
    docker build -t youtube-audio-for-tesla .
    ```
 
-2. Run the container:
+4. Run the container:
    ```bash
-   docker run -p 8283:8283 -e YOUTUBE_API_KEY=your_youtube_api_key youtube-audio-for-tesla
+   docker run -p 8283:8283 -e YOUTUBE_API_KEY=your_api_key en0o0n/youtube-audio-for-tesla:latest
    ```
 
-3. Access the application:
+5. Access the application:
    - Open your browser and go to `http://localhost:8283`.
 
 ---
