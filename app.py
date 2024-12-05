@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 from googleapiclient.discovery import build
-import subprocess
-import threading
 import os
 import yt_dlp
 import logging
@@ -16,17 +14,21 @@ API_KEY = os.getenv("YOUTUBE_API_KEY", "default_api_key")
 
 youtube = build("youtube", "v3", developerKey=API_KEY)
 
-def search_videos(query):
+def search_videos(query, page_token=None, order="relevance"):
     """
     Use the YouTube API to search for videos based on the user's query.
+    Supports pagination and allows sorting by order (e.g., date, viewCount, relevance).
     """
     try:
-        search_response = youtube.search().list(
+        search_request = youtube.search().list(
             q=query,
             type="video",
             part="id,snippet",
             maxResults=6,
-        ).execute()
+            pageToken=page_token,  # Include pageToken for pagination
+            order=order  # Sort results by the given order
+        )
+        search_response = search_request.execute()
 
         videos = []
         for search_result in search_response.get("items", []):
@@ -36,11 +38,15 @@ def search_videos(query):
                 "thumbnail": search_result["snippet"]["thumbnails"]["default"]["url"],
             }
             videos.append(video)
-        return videos
+
+        # Return videos along with the next page token
+        next_page_token = search_response.get("nextPageToken")
+        return videos, next_page_token
 
     except Exception as e:
         logging.error(f"Error searching videos: {e}")
-        return []
+        return [], None
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -48,11 +54,39 @@ def index():
     Render the index page and handle video search.
     """
     videos = []
+    next_page_token = None
     if request.method == "POST":
         search_query = request.form.get("search_query")
+        sort_order = request.form.get("sort_order", "relevance")  # Default to "relevance"
         if search_query:
-            videos = search_videos(search_query)
-    return render_template("index.html", videos=videos)
+            videos, next_page_token = search_videos(search_query, order=sort_order)
+    return render_template("index.html", videos=videos, next_page_token=next_page_token)
+
+
+@app.route("/more_videos", methods=["POST"])
+def more_videos():
+    """
+    Fetch more videos based on the current search query and page token.
+    """
+    try:
+        data = request.json
+        search_query = data.get("search_query")
+        page_token = data.get("page_token")
+        
+        if not search_query:
+            return jsonify({"error": "No search query provided"}), 400
+        
+        videos, next_page_token = search_videos(search_query, page_token)
+        
+        return jsonify({
+            "videos": videos,
+            "next_page_token": next_page_token
+        })
+    
+    except Exception as e:
+        logging.error(f"Error fetching more videos: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route("/play/<video_id>")
 def play(video_id):

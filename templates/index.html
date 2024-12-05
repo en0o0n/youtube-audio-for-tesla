@@ -5,205 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Youtube Audio for Tesla</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        h1 {
-            font-size: 3rem;
-            font-weight: 300;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        form {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        input, button {
-            padding: 20px;
-            font-size: 1.4rem;
-            border: none;
-            border-radius: 40px;
-        }
-        input {
-            flex-grow: 1;
-            background-color: #333;
-            color: #fff;
-        }
-        button {
-            background-color: #3e6ae1;
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            min-width: 150px;
-        }
-        button:hover {
-            background-color: #2c4fa3;
-        }
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        .video-item {
-            background-color: #1a1a1a;
-            border-radius: 15px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-        }
-        .video-item:hover {
-            transform: scale(1.05);
-        }
-        .video-item img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        .video-item h3 {
-            font-size: 1.2rem;
-            padding: 15px;
-            margin: 0;
-        }
-        .video-item button {
-            width: 100%;
-            border-radius: 0;
-        }
-        .video-item.selected {
-            box-shadow: 0 0 0 3px #3e6ae1;
-        }
-        .video-item.selected::after {
-            content: '▶';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: rgba(62, 106, 225, 0.8);
-            color: white;
-            padding: 5px;
-            border-radius: 50%;
-            font-size: 12px;
-        }
-        .audio-player-container {
-            background-color: #1a1a1a;
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 30px;
-        }
-        #audioPlayer {
-            width: 100%;
-            height: 80px;
-        }
-        .custom-audio-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .custom-audio-controls button {
-            background-color: #3e6ae1;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .custom-audio-controls button:hover {
-            background-color: #2c4fa3;
-        }
-        #playPauseBtn {
-            width: 80px;
-            height: 80px;
-            font-size: 36px;
-        }
-        #progressBar {
-            width: 100%;
-            height: 10px;
-            background-color: #333;
-            border-radius: 5px;
-            margin-top: 20px;
-            cursor: pointer;
-        }
-        #progress {
-            width: 0;
-            height: 100%;
-            background-color: #3e6ae1;
-            border-radius: 5px;
-            transition: width 0.1s linear;
-        }
-        #status {
-            text-align: center;
-            font-size: 1.4rem;
-            margin-top: 20px;
-        }
-        .player-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-        .status-icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-        .loading-icon {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3e6ae1;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        .playing-icon {
-            background-color: #3e6ae1;
-            clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
-            animation: pulse 1s ease-in-out infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Youtube Audio for Tesla</h1>
+        <h1>Tesla-style Audio Player</h1>
 
         <form method="POST">
             <input type="text" name="search_query" placeholder="Search for YouTube videos" required>
+            <div class="filter-container">
+                <label for="sortOrder" class="filter-label">Sort by:</label>
+                <div class="custom-select-wrapper">
+                    <select id="sortOrder" name="sort_order" class="custom-select">
+                        <option value="date">Newest</option>
+                        <option value="viewCount">Most Watched</option>
+                        <option value="relevance" selected>Relevance</option>
+                    </select>
+                </div>
+            </div>
             <button type="submit">Search</button>
         </form>
-
+        
         <div class="audio-player-container">
             <div class="player-status">
                 <div class="status-icon"></div>
                 <span id="player-status-text"></span>
+                <span id="currentSongTitle" style="display: none;"></span>
             </div>
-            <audio id="audioPlayer">
+            <audio id="audioPlayer" controls style="width: 100%; margin-top: 20px;">
                 <source id="audioSource" src="" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
@@ -227,135 +56,17 @@
                     </div>
                 {% endfor %}
             </div>
-            <div style="text-align: center; margin-top: 20px;"></div>
-                <a href="https://ko-fi.com/en0o0n" target="_blank">
-                  <img src="https://cdn.ko-fi.com/cdn/kofi2.png?v=3" alt="Buy Me a Coffee" style="height: 50px;">
-                </a>
-              </div>
-            {% endif %}
+        {% endif %}
 
         <div id="status"></div>
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="https://ko-fi.com/en0o0n" target="_blank">
+              <img src="https://cdn.ko-fi.com/cdn/kofi2.png?v=3" alt="Buy Me a Coffee" style="height: 50px;">
+            </a>
+        </div>
+        <h4>Version 2.0</h4>
     </div>
-
-    <script>
-        const audioPlayer = document.getElementById('audioPlayer');
-        const audioSource = document.getElementById('audioSource');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const progressBar = document.getElementById('progressBar');
-        const progress = document.getElementById('progress');
-        const playerStatusText = document.getElementById('player-status-text');
-        const statusIcon = document.querySelector('.status-icon');
-        let currentVideoId = null;
-        let playlist = [];
-
-        playPauseBtn.addEventListener('click', togglePlayPause);
-        audioPlayer.addEventListener('timeupdate', updateProgress);
-        progressBar.addEventListener('click', seek);
-        prevBtn.addEventListener('click', () => navigatePlaylist('prev'));
-        nextBtn.addEventListener('click', () => navigatePlaylist('next'));
-
-        function togglePlayPause() {
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-                playPauseBtn.textContent = '⏸';
-                updatePlayerStatus('playing');
-            } else {
-                audioPlayer.pause();
-                playPauseBtn.textContent = '▶';
-                updatePlayerStatus('paused');
-            }
-        }
-
-        function updateProgress() {
-            const percent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-            progress.style.width = `${percent}%`;
-        }
-
-        function seek(e) {
-            const percent = e.offsetX / progressBar.offsetWidth;
-            audioPlayer.currentTime = percent * audioPlayer.duration;
-        }
-
-        function selectAndPlayVideo(videoId) {
-            updateSelectedState(videoId);
-            playVideo(videoId);
-        }
-
-        function updateSelectedState(videoId) {
-            if (currentVideoId) {
-                const oldItem = document.getElementById(`video-${currentVideoId}`);
-                oldItem.classList.remove('selected');
-            }
-            const newItem = document.getElementById(`video-${videoId}`);
-            newItem.classList.add('selected');
-            currentVideoId = videoId;
-        }
-
-        function playVideo(videoId) {
-            updatePlayerStatus('loading');
-            fetch(`/play/${videoId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "Audio ready") {
-                        audioSource.src = data.audio_url;
-                        audioPlayer.load();
-                        audioPlayer.play();
-                        playPauseBtn.textContent = '⏸';
-                        updatePlayerStatus('playing');
-                    } else {
-                        updatePlayerStatus('error', data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    updatePlayerStatus('error', 'An error occurred while playing the video.');
-                });
-        }
-
-        function updatePlayerStatus(status, message = '') {
-            switch (status) {
-                case 'loading':
-                    playerStatusText.textContent = 'Loading audio...';
-                    statusIcon.className = 'status-icon loading-icon';
-                    break;
-                case 'playing':
-                    playerStatusText.textContent = 'Now playing audio';
-                    statusIcon.className = 'status-icon playing-icon';
-                    break;
-                case 'paused':
-                    playerStatusText.textContent = 'Audio paused';
-                    statusIcon.className = 'status-icon';
-                    break;
-                case 'error':
-                    playerStatusText.textContent = `Error: ${message}`;
-                    statusIcon.className = 'status-icon';
-                    break;
-            }
-        }
-
-        function navigatePlaylist(direction) {
-            if (playlist.length === 0) {
-                playlist = Array.from(document.querySelectorAll('.video-item')).map(item => item.id.split('-')[1]);
-            }
-            if (currentVideoId) {
-                let currentIndex = playlist.indexOf(currentVideoId);
-                if (direction === 'next') {
-                    currentIndex = (currentIndex + 1) % playlist.length;
-                } else {
-                    currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
-                }
-                selectAndPlayVideo(playlist[currentIndex]);
-            } else if (playlist.length > 0) {
-                selectAndPlayVideo(playlist[0]);
-            }
-        }
-
-        // Initialize playlist when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            playlist = Array.from(document.querySelectorAll('.video-item')).map(item => item.id.split('-')[1]);
-        });
-    </script>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
